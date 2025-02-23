@@ -1,0 +1,7 @@
+id=iOS_Emoji
+name=iOS 18.x Emoji font
+version=v18.2
+versionCode=18020
+author=Z3phery
+description= Replaces emoji font with iOS 18.x Emoji (Magic Mount and OverlayFS Support) 
+
