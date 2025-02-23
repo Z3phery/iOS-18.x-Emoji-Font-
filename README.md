@@ -1,5 +1,5 @@
 # Magisk-iOS 18.x-Emoji 😁👻👀💀
-Systemlessly replaces the emoji font with iOS Emoji.
+System replaces emoji font with iOS 18.x Emoji Font (Support Magic Mount and OverlayFS)
 
 ## Installation
 1. Download the latest release from the [Releases page]
