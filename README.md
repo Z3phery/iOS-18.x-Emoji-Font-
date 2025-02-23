@@ -4,7 +4,7 @@ Systemlessly replaces the emoji font with iOS Emoji.
 ## Installation
 1. Download the latest release from the [Releases page]
 2. Open the Root Manager.
-3. Open settings in KernelSU and disable "Unmount modules by default" (KernelSu users only)
+3. Open settings in KernelSU and disable "Unmount modules by default" (KernelSU users only)
 4. Go to **Modules** → **Install from storage** and select the downloaded ZIP file.
 5. Reboot your device.
 6. Done! 
