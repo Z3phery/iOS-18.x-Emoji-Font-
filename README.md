@@ -1,4 +1,4 @@
-# Magisk-iOS 18.x-Emoji 
+# Magisk-iOS 18.x-Emoji 😁👻👀💀
 Systemlessly replaces the emoji font with iOS Emoji.
 
 ## Installation
