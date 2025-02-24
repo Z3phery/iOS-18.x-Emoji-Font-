@@ -16,7 +16,9 @@ El sistema reemplaza la fuente emoji con la fuente emoji de iOS 18.x (compatible
 
 ## Compatibilidad
 **Root** : Requiere Magisk v28.0 o superior, Apatch v11039 o KernelSU Next v1.0.4 o superior
+
 **Versión de Android**: 13, 14 y 15 (versiones antiguas de Android no probadas)
+
 **Dispositivos**: funciona en la mayoría de los dispositivos.
 
 ## Probado en
