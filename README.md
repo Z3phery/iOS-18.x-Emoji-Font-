@@ -19,7 +19,6 @@ El sistema reemplaza la fuente emoji con la fuente emoji de iOS 18.x (compatible
 
 **Versión de Android**: 13, 14 y 15 (versiones antiguas de Android no probadas)
 
-**Dispositivos**: funciona en la mayoría de los dispositivos.
 
 ## Probado en
 Samsung S20 FE (G781B y G780G)
