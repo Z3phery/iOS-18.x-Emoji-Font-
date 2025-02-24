@@ -1,4 +1,4 @@
-# Magisk-iOS 18.x-Emoji 😁👻👀💀
+# iOS 18.x-Emoji 😁👻👀💀
 System replaces emoji font with iOS 18.x Emoji Font (Support Magic Mount and OverlayFS)
 
 ## Installation
