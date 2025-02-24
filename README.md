@@ -1,21 +1,21 @@
 # iOS 18.x-Emoji 😁👻👀💀
-System replaces emoji font with iOS 18.x Emoji Font (Support Magic Mount and OverlayFS)
+El sistema reemplaza la fuente emoji con la fuente emoji de iOS 18.x (compatible con Magic Mount y OverlayFS)
 
-## Installation
-1. Download the latest release from the [Releases page]
-2. Open the Root Manager.
-3. Open settings in KernelSU and disable "Unmount modules by default" (KernelSU users only)
-4. Go to **Modules** → **Install from storage** and select the downloaded ZIP file.
-5. Reboot your device.
-6. Done! 
+## Instalación
+1.- Descargue la última versión desde la [página de versiones]
+2.- Abra el Administrador raíz.
+3.- Abra la configuración en KernelSU y deshabilite "Desmontar módulos de forma predeterminada" (solo para usuarios de KernelSU)
+4.- Vaya a Módulos → Instalar desde almacenamiento y seleccione el archivo ZIP descargado.
+5.- Reinicie su dispositivo.
+6.- ¡Hecho!
 
-## Compatibility
-- **Root**: Requires Magisk v28.0 or higher, Apatch v11039 or KernelSU Next v1.0.4 or higher
-- **Android Version**: 13, 14 and 15 (old android versions no tested)
-- **Devices**: Works on most devices.
-  
-## Tested On
-- Samsung S20 FE (G781B and G780G)
+## Compatibilidad
+**Root** : Requiere Magisk v28.0 o superior, Apatch v11039 o KernelSU Next v1.0.4 o superior
+**Versión de Android**: 13, 14 y 15 (versiones antiguas de Android no probadas)
+*Dispositivos*: funciona en la mayoría de los dispositivos.
 
-## License
-This project is licensed under the [MIT License](https://github.com/Z3phery/iOS-18.x-Emoji-Font-/blob/main/Licence). Feel free to use, modify, and distribute it as per the license terms.
+## Probado en
+Samsung S20 FE (G781B y G780G)
+
+## Licencia
+Este proyecto está licenciado bajo la licencia MIT . Puedes usarlo, modificarlo y distribuirlo libremente según los términos de la licencia.
