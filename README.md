@@ -21,7 +21,9 @@ El sistema reemplaza la fuente emoji con la fuente emoji de iOS 18.x (compatible
 
 
 ## Probado en
-Samsung S20 FE (G781B y G780G)
+Samsung S20 FE (G781B y G780G) ONE Ui 5.1, 6.0 y 6.1.1.
+Samsung S20 FE (G780G) AOSP GSI Evolution X 10.3 A15, PixelOS A14, VoltageOS A15, Derpfest A14.
+Samsung S20 FE (G780G) AOSP Custom ROM Evolution X 10.0 A15, Evolution X 9.6 A14 y LineageOS 22
 
 ## Licencia
 Este proyecto está licenciado bajo la licencia MIT . Puedes usarlo, modificarlo y distribuirlo libremente según los términos de la licencia.
