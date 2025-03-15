@@ -151,7 +151,7 @@ replace_emojis "com.facebook.mlite" "/data/data/com.facebook.mlite" "files" "emo
 clear_cache "com.facebook.mlite"
   
 # Borrar la caché de Gboard si está instalado
-ui_print "- Clearing Gboard Cache"
+ui_print "- Borrando cache de Gboard"
 clear_cache "com.google.android.inputmethod.latin"
   
 # Eliminar el directorio /data/fonts para Android 12+ en lugar de reemplazar los archivos
