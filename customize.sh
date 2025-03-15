@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-# Script Details
+# Detalles del script
 AUTOMOUNT=true
 SKIPMOUNT=false
 PROPFILE=false
@@ -8,16 +8,16 @@ POSTFSDATA=false
 LATESTARTSERVICE=true
 
 ui_print "*******************************"
-ui_print "*          iOS Emoji 18.x         *"
+ui_print "*          iOS Emoji 18.4         *"
 ui_print "*******************************"
 
-# Definitions
+# Definiciones
 FONT_DIR="$MODPATH/system/fonts"
 FONT_EMOJI="NotoColorEmoji.ttf"
 SYSTEM_FONT_FILE="/system/fonts/NotoColorEmoji.ttf"
 
 
-# Function to check if a package is installed
+# Función para comprobar si un paquete está instalado
 package_installed() {
     local package="$1"
     if pm list packages | grep -q "$package"; then
@@ -27,7 +27,7 @@ package_installed() {
     fi
 }
 
-# Function to set user-friendly app name for package name, otherwise fallback to package name
+# Función para establecer un nombre de aplicación fácil de usar para el nombre del paquete, de lo contrario, se recurre al nombre del paquete
 display_name() {
     local package_name="$1"
     case "$package_name" in
@@ -36,11 +36,11 @@ display_name() {
         "com.facebook.lite") echo "Facebook Lite" ;;
         "com.facebook.mlite") echo "Messenger Lite" ;;
         "com.google.android.inputmethod.latin") echo "Gboard" ;;
-        *) echo "$package_name" ;;  # Default to package name if not found
+        *) echo "$package_name" ;;  # Nombre del paquete predeterminado si no se encuentra
     esac
 }
 
-# Function to mount a font file
+# Función para montar un archivo de fuente
 mount_font() {
     local source="$1"
     local target="$2"
@@ -65,7 +65,7 @@ mount_font() {
     fi
 }
 
-# Function to replace emojis for a specific app
+# Función para reemplazar emojis para una aplicación específica
 replace_emojis() {
     local app_name="$1"
     local app_dir="$2"
@@ -74,26 +74,26 @@ replace_emojis() {
     local app_display_name=$(display_name "$app_name")
     
     if package_installed "$app_name"; then
-        ui_print "- Detected: $app_display_name"
+        ui_print "- Detectado: $app_display_name"
         mount_font "$FONT_DIR/$FONT_EMOJI" "$app_dir/$emoji_dir/$target_filename"
-        ui_print "- Emojis mounted: $app_display_name"
+        ui_print "- Emojis montados: $app_display_name"
     else
-        ui_print "- Not installed: $app_display_name"
+        ui_print "- No instalados: $app_display_name"
     fi
 }
 
-# Function to clear app cache
+# Función para borrar el caché de la aplicación
 clear_cache() {
     local app_name="$1"
     local app_display_name=$(display_name "$app_name")
 	
-    # Check if app exists
+    # Comprobar si la aplicación existe
     if ! package_installed "$app_name"; then
-        ui_print "- Skipping: $app_display_name (not installed)"
+        ui_print "- Omitir: $app_display_name (not installed)"
         return 0
     fi
 	
-	ui_print "- Cleaning cache: $app_display_name"
+	ui_print "- Limpieza de caché: $app_display_name"
 	
     for subpath in /cache /code_cache /app_webview /files/GCache; do
         target_dir="/data/data/${app_name}${subpath}"
@@ -102,27 +102,27 @@ clear_cache() {
         fi
     done
 
-    # Force-stop
+    # Detención forzada
     am force-stop "$app_name"
-    ui_print "- Cache cleared: $app_display_name"
+    ui_print "- Cache borrada: $app_display_name"
 }
 
-# Extract module files
+# Extraer archivos del módulo
 unzip -o "$ZIPFILE" 'system/*' -d "$MODPATH" >&2 || {
-    ui_print "- Failed to extract module files"
+    ui_print "- No se pudieron extraer los archivos del módulo"
     exit 1
 }
 
-# Replace system emoji fonts
-ui_print "- Installing Emojis"
+# Reemplazar las fuentes emoji del sistema
+ui_print "- Instalando Emojis"
 variants="SamsungColorEmoji.ttf LGNotoColorEmoji.ttf HTC_ColorEmoji.ttf AndroidEmoji-htc.ttf ColorUniEmoji.ttf DcmColorEmoji.ttf CombinedColorEmoji.ttf NotoColorEmojiLegacy.ttf"
 
 for font in $variants; do
     if [ -f "/system/fonts/$font" ]; then
         if cp "$FONT_DIR/$FONT_EMOJI" "$FONT_DIR/$font"; then
-            ui_print "- Replaced $font"
+            ui_print "- Reemplazado $font"
         else
-            ui_print "- Failed to replace $font"
+            ui_print "- Error al reemplazar $font"
         fi
     fi
 done
@@ -157,7 +157,7 @@ clear_cache "com.google.android.inputmethod.latin"
 # Eliminar el directorio /data/fonts para Android 12+ en lugar de reemplazar los archivos
 if [ -d "/data/fonts" ]; then
     rm -rf "/data/fonts"
-    ui_print "- Removed existing /data/fonts directory"
+    ui_print "- Se eliminó el directorio /data/fonts existente"
 fi
 
 # Manejar enlaces simbólicos fonts.xml
@@ -169,18 +169,18 @@ for font in $FONTFILES; do
 done
 
 # Establecer permisos
-ui_print "- Setting Permissions"
+ui_print "- Estableciendo permisos"
 set_perm_recursive "$MODPATH" 0 0 0755 0644
-ui_print "- Wait ⏳"
-ui_print "- iOS 18.2 emojis successfully installed"
-ui_print "- Reboot your device to apply changes.  🔄"
-ui_print "- Done ✅"
+ui_print "- Espere ⏳"
+ui_print "- iOS 18.4 emojis se han instalado con éxito"
+ui_print "- Reinicia tu dispositivo para aplicar los cambios.  🔄"
+ui_print "- Listo ✅"
 
 # Soporte de OverlayFS basado en https://github.com/HuskyDG/magic_overlayfs 
 OVERLAY_IMAGE_EXTRA=0
 OVERLAY_IMAGE_SHRINK=true
 
-# Utilice OverlayFS solo si está instalado Magisk_OverlayFS
+# Utilice OverlayFS solo si está instalado Magisk_OverlayFS (dependencia) 
 if [ -f "/data/adb/modules/magisk_overlayfs/util_functions.sh" ] && \
     /data/adb/modules/magisk_overlayfs/overlayfs_system --test; then
   ui_print "- Add support for overlayfs"
