@@ -127,40 +127,40 @@ for font in $variants; do
     fi
 done
   
-# Mount system emoji font
+# Montar imagen emoji font en system
 if [ -f "$FONT_DIR/$FONT_EMOJI" ]; then
     if mount_font "$FONT_DIR/$FONT_EMOJI" "$SYSTEM_FONT_FILE"; then
-        ui_print "- System font mounted successfully"
+        ui_print "- System font montada con exito"
     else
-        ui_print "- Failed to mount system font"
+        ui_print "- Error al montar system font"
     fi
 else
-    ui_print "- Source emoji font not found. Skipping system font mount."
+    ui_print "- Fuente emoji font no encontrada. Pasando a montar system font ."
 fi
 
-# Replace Facebook and Messenger emojis
+# Reemplazar emojis de Facebook y Messenger
 replace_emojis "com.facebook.orca" "/data/data/com.facebook.orca" "app_ras_blobs" "FacebookEmoji.ttf"
 clear_cache "com.facebook.orca"
 replace_emojis "com.facebook.katana" "/data/data/com.facebook.katana" "app_ras_blobs" "FacebookEmoji.ttf"
 clear_cache "com.facebook.katana"
 
-# Replace Lite app emojis
+# Reemplazar los emojis de la aplicación Facebook Lite
 replace_emojis "com.facebook.lite" "/data/data/com.facebook.lite" "files" "emoji_font.ttf"
 clear_cache "com.facebook.lite"
 replace_emojis "com.facebook.mlite" "/data/data/com.facebook.mlite" "files" "emoji_font.ttf"
 clear_cache "com.facebook.mlite"
   
-# Clear Gboard cache if installed
+# Borrar la caché de Gboard si está instalado
 ui_print "- Clearing Gboard Cache"
 clear_cache "com.google.android.inputmethod.latin"
   
-# Remove /data/fonts directory for Android 12+ instead of replacing the files (removing the need to run the troubleshooting step, thanks @reddxae)
+# Eliminar el directorio /data/fonts para Android 12+ en lugar de reemplazar los archivos
 if [ -d "/data/fonts" ]; then
     rm -rf "/data/fonts"
     ui_print "- Removed existing /data/fonts directory"
 fi
 
-# Handle fonts.xml symlinks
+# Manejar enlaces simbólicos fonts.xml
 [[ -d /sbin/.core/mirror ]] && MIRRORPATH=/sbin/.core/mirror || unset MIRRORPATH
 FONTS=/system/etc/fonts.xml
 FONTFILES=$(sed -ne '/<family lang="und-Zsye".*>/,/<\/family>/ {s/.*<font weight="400" style="normal">\(.*\)<\/font>.*/\1/p;}' "$MIRRORPATH$FONTS")
@@ -168,7 +168,7 @@ for font in $FONTFILES; do
     ln -s /system/fonts/NotoColorEmoji.ttf "$MODPATH/system/fonts/$font"
 done
 
-# Set permissions
+# Establecer permisos
 ui_print "- Setting Permissions"
 set_perm_recursive "$MODPATH" 0 0 0755 0644
 ui_print "- Wait ⏳"
@@ -176,11 +176,11 @@ ui_print "- iOS 18.2 emojis successfully installed"
 ui_print "- Reboot your device to apply changes.  🔄"
 ui_print "- Done ✅"
 
-# OverlayFS Support based on https://github.com/HuskyDG/magic_overlayfs 
+# Soporte de OverlayFS basado en https://github.com/HuskyDG/magic_overlayfs 
 OVERLAY_IMAGE_EXTRA=0
 OVERLAY_IMAGE_SHRINK=true
 
-# Only use OverlayFS if Magisk_OverlayFS is installed
+# Utilice OverlayFS solo si está instalado Magisk_OverlayFS
 if [ -f "/data/adb/modules/magisk_overlayfs/util_functions.sh" ] && \
     /data/adb/modules/magisk_overlayfs/overlayfs_system --test; then
   ui_print "- Add support for overlayfs"
