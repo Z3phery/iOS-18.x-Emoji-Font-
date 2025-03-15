@@ -1,36 +1,36 @@
 #!/system/bin/sh
 
-# Module directory (where the script is located)
+# Directorio del módulo (donde se encuentra el script)
 MODPATH=${0%/*}
 
-# Logging configuration
+# Configuración de registro
 LOGFILE="$MODPATH/service.log" # Log file
 MAX_LOG_SIZE=$((5 * 1024 * 1024)) # 5 MB
 MAX_LOG_FILES=3 # Keep up to 3 archived logs
 MAX_LOG_AGE_DAYS=7 # Delete logs older than 7 days
 
-# Facebook app package names
+# Nombres de los paquetes de aplicaciones de Facebook
 FACEBOOK_APPS="com.facebook.orca com.facebook.katana com.facebook.lite com.facebook.mlite"
 
-# GMS font services
+# Servicios de fuentes GMS
 GMS_FONT_PROVIDER="com.google.android.gms/com.google.android.gms.fonts.provider.FontsProvider"
 GMS_FONT_UPDATER="com.google.android.gms/com.google.android.gms.fonts.update.UpdateSchedulerService"
 
-# Paths for cleanup
+# Parches de limpieza
 DATA_FONTS_DIR="/data/fonts"
 GMS_FONTS_DIR="/data/data/com.google.android.gms/files/fonts/opentype"
 
-# Ensure the log directory exists
+# Asegúra que el directorio de registro exista
 mkdir -p "$MODPATH"
 
-# Logging function with user feedback
+# Función de registro con comentarios del usuario
 log() {
     # Delete old log files
     find "$MODPATH" -name "$(basename "$LOGFILE")*" -type f -mtime +$MAX_LOG_AGE_DAYS -exec rm -f {} \;
 
-    # Check if log file exists and is too large
+    # Compruebe si el archivo de registro existe y es demasiado grande
     if [ -f "$LOGFILE" ] && [ $(stat -c%s "$LOGFILE") -gt $MAX_LOG_SIZE ]; then
-        # Rotate logs
+        # Rotar registros
         for i in $(seq $MAX_LOG_FILES -1 1); do
             if [ -f "$LOGFILE.$i" ]; then
                 mv "$LOGFILE.$i" "$LOGFILE.$((i+1))"
@@ -39,136 +39,138 @@ log() {
         mv "$LOGFILE" "$LOGFILE.1"
     fi
 
-    # Create log message
+    # Crear mensaje de registro
     local log_message="$(date '+%Y-%m-%d %H:%M:%S') - $1"
     echo "$log_message" >> "$LOGFILE"
     
-    # Display simplified message to user
+    # Mostrar mensaje simplificado al usuario
     echo "[*] $(echo "$1" | sed 's/^[A-Z]*: //')"
 }
 
-# Function to check if a package/service exists
+# Función para comprobar si existe un paquete/servicio
 service_exists() {
     pm list packages | grep -q "$1"
     return $?
 }
 
 
-# Log script header
+# Encabezado del script de registro
 log "================================================"
-log "iOS Emoji 18.x service.sh Script"
-log "Brand: $(getprop ro.product.brand)"
-log "Device: $(getprop ro.product.model)"
-log "Android Version: $(getprop ro.build.version.release)"
+log "iOS Emoji 18.4 service.sh Script"
+log "Marca: $(getprop ro.product.brand)"
+log "Dispositivo: $(getprop ro.product.model)"
+log "Version de Android: $(getprop ro.build.version.release)"
+log "Versión de SDK= $(getprop ro.system.build.version.sdk)"
+log "Arquitectura= $(getprop ro.product.cpu.abi)"
 log "================================================"
 
-# Wait until the device has completed booting
+# Espere hasta que el dispositivo haya terminado de iniciarse
 while [ "$(getprop sys.boot_completed)" != "1" ]; do
     sleep 5
 done
 
-# Wait until the /sdcard directory is available
+# Espere hasta que el directorio /sdcard esté disponible
 while [ ! -d /sdcard ]; do
     sleep 5
 done
 
 log "INFO: Service started."
 
-# Replace in-app emoji fonts
+# Reemplazar las fuentes de emojis en la aplicación
 replace_emoji_fonts() {
-    log "INFO: Starting emoji replacement process..."
+    log "INFO: Iniciando el proceso de reemplazo de emojis..."
 
-    # Check if the source emoji font exists
+    # Comprueba si existe la fuente emoji de origen
     if [ ! -f "$MODPATH/system/fonts/NotoColorEmoji.ttf" ]; then
-        log "ERROR: Source emoji font not found. Skipping replacement."
+        log "ERROR: No se encontró la fuente del emoji original. Se omite el reemplazo.."
         return
     fi
 
-    # Find all .ttf files containing "Emoji" in their names
+    # Encuentra todos los archivos .ttf que contienen "Emoji" en sus nombres
     EMOJI_FONTS=$(find /data/data -iname "*emoji*.ttf" -print)
 
     if [ -z "$EMOJI_FONTS" ]; then
-        log "INFO: No emoji fonts found to replace. Skipping."
+        log "INFO: No se encontraron fuentes de emoji para reemplazar. Omitiendo."
         return
     fi
 
-    # Replace each emoji font with the custom font
+    # Reemplace cada fuente de emoji con la fuente personalizada
     for font in $EMOJI_FONTS; do
         # Check if the target font file is writable
         if [ ! -w "$font" ]; then
-            log "ERROR: Font file is not writable: $font"
+            log "ERROR: El archivo de fuente no se puede escribir: $font"
             continue
         fi
 
-        log "INFO: Replacing emoji font: $font"
+        log "INFO: Reemplazo de la fuente emoji: $font"
         if ! cp "$MODPATH/system/fonts/NotoColorEmoji.ttf" "$font"; then
-            log "ERROR: Failed to replace emoji font: $font"
+            log "ERROR: No se pudo reemplazar la fuente del emoji: $font"
         else
-            log "INFO: Successfully replaced emoji font: $font"
+            log "INFO: Fuente emoji reemplazada exitosamente: $font"
         fi
 
         # Set permissions for the replaced file
         if ! chmod 644 "$font"; then
-            log "ERROR: Failed to set permissions for: $font"
+            log "ERROR: No se pudieron establecer los permisos para: $font"
         else
-            log "INFO: Successfully set permissions for: $font"
+            log "INFO: Se establecieron correctamente los permisos para: $font"
         fi
     done
 
-    log "INFO: Emoji replacement process completed."
+    log "INFO: Proceso de reemplazo de emoji completado."
 }
 
 replace_emoji_fonts
 
-# Force-stop Facebook apps after all replacements are done
-log "INFO: Force-stopping apps..."
+# Forzar la detención de las aplicaciones de Facebook después de realizar todos los reemplazos
+log "INFO: Forzar la detención de aplicaciones..."
 for app in $FACEBOOK_APPS; do
     if ! am force-stop "$app"; then
-        log "ERROR: Failed to force-stop app: $app"
+        log "ERROR: No se pudo forzar la detención de la aplicación: $app"
     else
-        log "INFO: Successfully force-stopped app: $app"
+        log "INFO: Aplicación detenida forzosamente con éxito: $app"
     fi
 done
 
-# Add a delay to allow the system to process the changes
+# Agregue un retraso para permitir que el sistema procese los cambios
 sleep 2
 
-# Disable GMS font services if they exist
+# Deshabilitar los servicios de fuentes GMS si existen
 if service_exists "$GMS_FONT_PROVIDER"; then
-    log "INFO: Disabling GMS font provider: $GMS_FONT_PROVIDER"
+    log "INFO: Deshabilitar el proveedor de fuentes GMS: $GMS_FONT_PROVIDER"
     if ! pm disable "$GMS_FONT_PROVIDER"; then
-        log "ERROR: Failed to disable GMS font provider: $GMS_FONT_PROVIDER"
+        log "ERROR: No se pudo deshabilitar el proveedor de fuentes GMS: $GMS_FONT_PROVIDER"
     else
-        log "INFO: Successfully disabled GMS font provider: $GMS_FONT_PROVIDER"
+        log "INFO: Proveedor de fuentes GMS deshabilitado exitosamente: $GMS_FONT_PROVIDER"
     fi
 else
-    log "INFO: GMS font provider not found: $GMS_FONT_PROVIDER"
+    log "INFO: No se encontró el proveedor de fuentes GMS: $GMS_FONT_PROVIDER"
 fi
 
 if service_exists "$GMS_FONT_UPDATER"; then
-    log "INFO: Disabling GMS font updater: $GMS_FONT_UPDATER"
+    log "INFO: Deshabilitar el actualizador de fuentes GMS: $GMS_FONT_UPDATER"
     if ! pm disable "$GMS_FONT_UPDATER"; then
-        log "ERROR: Failed to disable GMS font updater: $GMS_FONT_UPDATER"
+        log "ERROR: No se pudo deshabilitar el actualizador de fuentes GMS: $GMS_FONT_UPDATER"
     else
-        log "INFO: Successfully disabled GMS font updater: $GMS_FONT_UPDATER"
+        log "INFO: Actualizador de fuentes GMS deshabilitado exitosamente: $GMS_FONT_UPDATER"
     fi
 else
-    log "INFO: GMS font updater not found: $GMS_FONT_UPDATER"
+    log "INFO: No se encontró el actualizador de fuentes GMS: $GMS_FONT_UPDATER"
 fi
 
-# Clean up leftover font files
-log "INFO: Cleaning up leftover font files..."
+# Limpiar archivos de fuentes sobrantes
+log "INFO: Limpieza de archivos de fuentes sobrantes..."
 if [ -d "$DATA_FONTS_DIR" ]; then
     if ! rm -rf "$DATA_FONTS_DIR"; then
-        log "ERROR: Failed to clean up directory: $DATA_FONTS_DIR"
+        log "ERROR: No se pudo limpiar el directorio: $DATA_FONTS_DIR"
     else
-        log "INFO: Successfully cleaned up directory: $DATA_FONTS_DIR"
+        log "INFO: Directorio limpiado exitosamente: $DATA_FONTS_DIR"
     fi
 else
-    log "INFO: Directory not found: $DATA_FONTS_DIR"
+    log "INFO: Directorio no encontrado: $DATA_FONTS_DIR"
 fi
 
-# Commented out the deletion of .ttf files in the opentype directory (still need testing)
+# Eliminación de archivos .ttf en el directorio opentype (aún se necesitan pruebas)
 # if [ -d "$GMS_FONTS_DIR" ]; then
 #     if ! rm -rf "$GMS_FONTS_DIR"/*ttf; then
 #         log "ERROR: Failed to clean up ttf files in directory: $GMS_FONTS_DIR"
@@ -179,5 +181,5 @@ fi
 #     log "INFO: Directory not found: $GMS_FONTS_DIR"
 # fi
 
-log "INFO: Service completed."
+log "INFO: Servicio completado."
 log "================================================"
